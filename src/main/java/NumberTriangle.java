@@ -109,20 +109,43 @@ public class NumberTriangle {
         InputStream inputStream = NumberTriangle.class.getClassLoader().getResourceAsStream(fname);
         BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
 
-
-        // TODO define any variables that you want to use to store things
-
         // will need to return the top of the NumberTriangle,
         // so might want a variable for that.
         NumberTriangle top = null;
+        NumberTriangle[] previousRow = null;
 
         String line = br.readLine();
         while (line != null) {
 
-            // remove when done; this line is included so running starter code prints the contents of the file
-            System.out.println(line);
+            // Parse the line to get numbers
+            String[] numbers = line.trim().split("\\s+");
+            NumberTriangle[] currentRow = new NumberTriangle[numbers.length];
 
-            // TODO process the line
+            // Create NumberTriangle objects for current row
+            for (int i = 0; i < numbers.length; i++) {
+                currentRow[i] = new NumberTriangle(Integer.parseInt(numbers[i]));
+            }
+
+            // If this is the first row, it's the top of the triangle
+            if (previousRow == null) {
+                top = currentRow[0];
+            } else {
+                // Link current row nodes to previous row nodes
+                for (int i = 0; i < currentRow.length; i++) {
+                    // Each node is the right child of the node at position i-1 in previous row
+                    if (i > 0 && i - 1 < previousRow.length) {
+                        previousRow[i - 1].setRight(currentRow[i]);
+                    }
+
+                    // Each node is the left child of the node at position i in previous row
+                    if (i < previousRow.length) {
+                        previousRow[i].setLeft(currentRow[i]);
+                    }
+                }
+            }
+
+            // Current row becomes the previous row for next iteration
+            previousRow = currentRow;
 
             //read the next line
             line = br.readLine();
